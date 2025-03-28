@@ -1,18 +1,8 @@
-import { useState, useRef, useEffect } from 'react'
 import reactLogo from '/react.svg'
 import viteLogo from '/vite.svg'
-import { init, render } from './cybertruck'
+import Vandalize from './components/vandalize'
 
 function App() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    init(canvas)
-    render()
-
-  }, [canvasRef.current])
 
   return (
     <>
@@ -27,7 +17,7 @@ function App() {
       <h1>Vite + React</h1>
 
       <div>
-        <canvas id="webgl" ref={canvasRef}></canvas>
+        <Vandalize />
       </div>
     </>
   )
