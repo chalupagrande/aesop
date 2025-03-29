@@ -19,13 +19,10 @@ let controls: OrbitControls | undefined
 let gltfLoader: GLTFLoader | undefined
 let textureLoader: THREE.TextureLoader | undefined
 let rgbeLoader: RGBELoader | undefined
-let directionalLight: THREE.DirectionalLight | undefined
 let ambientLight: THREE.AmbientLight | undefined
-let floor: THREE.Mesh | undefined
 let stats: Stats | undefined
 let decalMaterial: THREE.MeshPhongMaterial | undefined
 let raycaster: THREE.Raycaster | undefined
-let increment = 0.01
 let mouseHelper: THREE.Mesh | undefined
 let line: THREE.Line | undefined
 let truck: THREE.Group<THREE.Object3DEventMap> | undefined
@@ -35,7 +32,8 @@ let moved = false
 const intersection = {
   intersects: false,
   point: new THREE.Vector3(),
-  normal: new THREE.Vector3()
+  normal: new THREE.Vector3(),
+  object: new THREE.Mesh(),
 };
 let mouse = new THREE.Vector2();
 const intersects: THREE.Intersection<THREE.Object3D<THREE.Object3DEventMap>>[] = [];
@@ -50,8 +48,6 @@ const params = {
   maxScale: 20,
   rotate: true,
 };
-
-
 
 
 
@@ -88,9 +84,9 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
    * Objects
    */
 
-  const decalDiffuse = textureLoader.load('textures/decal/decal-diffuse.png');
+  const decalDiffuse = textureLoader.load('decal-diffuse.png');
   decalDiffuse.colorSpace = THREE.SRGBColorSpace;
-  const decalNormal = textureLoader.load('textures/decal/decal-normal.jpg');
+  const decalNormal = textureLoader.load('decal-normal.jpg');
   decalMaterial = new THREE.MeshPhongMaterial({
     specular: 0x444444,
     map: decalDiffuse,
@@ -113,21 +109,16 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
       truck.scale.set(5, 5, 5)
       truck.rotateY(Math.PI * 0.5)
       scene?.add(truck)
-
-      const truckParts = truck.children[0].children
-      const wheel = truckParts.find((part: THREE.Object3D) => {
-        return part.name.includes("WHEEL")
+      truck.traverse((child: THREE.Object3D) => {
+        // makes tires black
+        if (child instanceof THREE.Mesh && child.name.includes("BRUBLER")) {
+          const rubberMaterial = child?.material as THREE.MeshStandardMaterial
+          if (!rubberMaterial) { return }
+          rubberMaterial.color?.set(0x000000)
+          rubberMaterial.metalness = 0
+          rubberMaterial.roughness = 1
+        }
       })
-
-      const wheelParts = wheel?.children
-      const wheelRubberMesh = wheelParts?.find((part: THREE.Object3D) => {
-        return part.name.includes("BRUBLER")
-      }) as THREE.Mesh
-      const rubberMaterial = wheelRubberMesh?.material as THREE.MeshStandardMaterial
-      if (!rubberMaterial) { return }
-      rubberMaterial.color?.set(0x000000)
-      rubberMaterial.metalness = 0
-      rubberMaterial.roughness = 1
     },
     (progress) => { },
     (error) => {
@@ -155,38 +146,12 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
   })
 
   /**
-   * Floor
-   */
-
-  floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(10, 10),
-    new THREE.MeshStandardMaterial({
-      color: '#444444',
-      metalness: 0,
-      roughness: 0.3
-    })
-  )
-  floor.receiveShadow = true
-  floor.rotation.x = - Math.PI * 0.5
-  // scene.add(floor)
-
-  /**
    * Lights
    */
 
   ambientLight = new THREE.AmbientLight(0xffffff, 10.4)
   scene.add(ambientLight)
 
-  directionalLight = new THREE.DirectionalLight(0xffffff, 10.8)
-  directionalLight.castShadow = true
-  directionalLight.shadow.mapSize.set(1024, 1024)
-  directionalLight.shadow.camera.far = 15
-  directionalLight.shadow.camera.left = - 7
-  directionalLight.shadow.camera.top = 7
-  directionalLight.shadow.camera.right = 7
-  directionalLight.shadow.camera.bottom = - 7
-  directionalLight.position.set(- 5, 5, 5)
-  scene.add(directionalLight)
 
 
   /**
@@ -252,9 +217,6 @@ export function render() {
   }
   controls.update()
   renderer.render(scene, camera)
-  directionalLight?.color.set(globalThis.settings.color)
-  directionalLight?.position.set(Math.cos(increment) * 5, 5, Math.sin(increment) * 5)
-  increment += 0.01
   stats?.update()
   requestAnimationFrame(render)
 }
@@ -285,6 +247,7 @@ function checkIntersection(x: number, y: number) {
     n.add(intersects[0].point);
 
     intersection.normal.copy(intersects[0].face.normal);
+    intersection.object.copy(intersects[0].object)
     mouseHelper?.lookAt(n);
 
     const positions = line?.geometry.attributes.position;
@@ -334,20 +297,19 @@ function shoot() {
   if (!truck || !mouseHelper || !decalMaterial) {
     return
   }
-  console.log(scene?.children)
-  console.log("SHOOTING")
+
   position.copy(intersection.point);
   orientation.copy(mouseHelper.rotation);
+  const targetMesh = intersection.object
 
   if (params.rotate) orientation.z = Math.random() * 2 * Math.PI;
-
-  const scale = params.minScale + Math.random() * (params.maxScale - params.minScale);
-  size.set(scale, scale, scale);
+  size.set(1, 1, 1);
 
   const material = decalMaterial.clone();
-  material.color.setHex(Math.random() * 0xffffff);
+  const color = new THREE.Color(globalThis.settings.color);
+  material.color.set(color);
 
-  const m = new THREE.Mesh(new DecalGeometry(undefined, position, orientation, size), material);
+  const m = new THREE.Mesh(new DecalGeometry(targetMesh, position, orientation, size), material);
   m.renderOrder = decals.length; // give decals a fixed render order
 
   decals.push(m);
