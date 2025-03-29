@@ -33,7 +33,7 @@ export function Home() {
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <img src="/not-found.png" alt="not found" className="object-cover" width="100" />
-      <h1 className="text-9xl font-technical my-4">404</h1>
+      <h1 className="text-[250px] font-technical my-4">404</h1>
       <p className="max-w-[500px] text-center">Outcomes, deal flow, valuation, exits, the videos. We still do all that.</p>
 
       <p className="my-4">Returning in:</p>

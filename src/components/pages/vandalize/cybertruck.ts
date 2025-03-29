@@ -5,6 +5,7 @@ import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { GroundedSkybox } from 'three/addons/objects/GroundedSkybox.js';
+import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry.js'
 
 
 // variables
@@ -27,8 +28,8 @@ let raycaster: THREE.Raycaster | undefined
 let increment = 0.01
 let mouseHelper: THREE.Mesh | undefined
 let line: THREE.Line | undefined
-let mesh: THREE.Mesh | undefined
-let truckGroup: THREE.Group | undefined
+let truck: THREE.Group<THREE.Object3DEventMap> | undefined
+let moved = false
 
 
 const intersection = {
@@ -68,8 +69,8 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
 
   scene = new THREE.Scene()
   camera = new THREE.PerspectiveCamera(75, w / h)
-  camera.position.z = 5
-  camera.position.y = 1
+  camera.position.z = 20
+  camera.position.y = 10
   scene.add(camera)
   stats = new Stats()
   container.appendChild(stats.dom)
@@ -105,29 +106,28 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
   });
 
 
-  truckGroup = new THREE.Group()
-  truckGroup.name = "Truck"
   gltfLoader.load(
-    'cybertruck.glb',
+    'tesla-cybertruck-2019.gltf',
     (gltf) => {
-      console.log('gltf', gltf)
-      while (gltf.scene.children.length > 0) {
-        const child = gltf.scene.children[0]
-        child.receiveShadow = true
-        child.castShadow = true
-        truckGroup?.add(child)
-        scene?.add(child)
+      truck = gltf.scene
+      truck.scale.set(5, 5, 5)
+      truck.rotateY(Math.PI * 0.5)
+      scene?.add(truck)
 
-        if (child.name === "Body") {
-          const childCopy = child.clone()
-          childCopy.name = "BodyCopy"
-          childCopy.scale.set(1, 1, -1)
-          childCopy.receiveShadow = true
-          childCopy.castShadow = true
-          truckGroup?.add(childCopy)
-          scene?.add(childCopy)
-        }
-      }
+      const truckParts = truck.children[0].children
+      const wheel = truckParts.find((part: THREE.Object3D) => {
+        return part.name.includes("WHEEL")
+      })
+
+      const wheelParts = wheel?.children
+      const wheelRubberMesh = wheelParts?.find((part: THREE.Object3D) => {
+        return part.name.includes("BRUBLER")
+      }) as THREE.Mesh
+      const rubberMaterial = wheelRubberMesh?.material as THREE.MeshStandardMaterial
+      if (!rubberMaterial) { return }
+      rubberMaterial.color?.set(0x000000)
+      rubberMaterial.metalness = 0
+      rubberMaterial.roughness = 1
     },
     (progress) => { },
     (error) => {
@@ -140,12 +140,12 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
    */
 
 
-  rgbeLoader.load('cobblestone_street_night_4k.hdr', (environmentMap) => {
+  rgbeLoader.load('abandoned_parking_4k.hdr', (environmentMap) => {
     if (!scene) {
       throw new Error('Scene is not defined')
     }
     environmentMap.mapping = THREE.EquirectangularReflectionMapping
-    scene.background = environmentMap
+    // scene.background = environmentMap
     scene.environment = environmentMap
 
     //skybox
@@ -225,10 +225,24 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
   scene.add(line);
 
   /**
-   * Resize
+   * Listeners
    */
 
   window.addEventListener('resize', handleResize)
+  window.addEventListener('pointermove', onPointerMove)
+  controls.addEventListener('change', function () {
+    moved = true;
+  });
+  window.addEventListener('pointerdown', function () {
+    moved = false;
+  });
+  window.addEventListener('pointerup', function (event) {
+    if (moved === false) {
+      checkIntersection(event.clientX, event.clientY);
+      if (intersection.intersects) shoot();
+    }
+  });
+
 }
 
 
@@ -245,47 +259,50 @@ export function render() {
   requestAnimationFrame(render)
 }
 
-// function checkIntersection(x: number, y: number) {
-//   if (!camera || !mouse || !line || !mesh) return
+function checkIntersection(x: number, y: number) {
+  if (!camera || !mouse || !line || !truck) {
+    return
+  }
 
-//   mouse.x = (x / window.innerWidth) * 2 - 1;
-//   mouse.y = - (y / window.innerHeight) * 2 + 1;
+  mouse.x = (x / window.innerWidth) * 2 - 1;
+  mouse.y = - (y / window.innerHeight) * 2 + 1;
 
-//   raycaster?.setFromCamera(mouse, camera);
-//   raycaster?.intersectObject(mesh, false, intersects);
+  raycaster?.setFromCamera(mouse, camera);
+  raycaster?.intersectObject(truck, true, intersects);
+  if (intersects.length > 0) {
+    const p = intersects[0].point;
+    mouseHelper?.position.copy(p);
+    intersection.point.copy(p);
 
-//   if (intersects.length > 0) {
+    const normalMatrix = new THREE.Matrix3().getNormalMatrix(truck.matrixWorld);
 
-//     const p = intersects[0].point;
-//     mouseHelper?.position.copy(p);
-//     intersection.point.copy(p);
+    if (!intersects[0]?.face) {
+      return
+    }
+    const n = intersects[0].face.normal.clone();
+    n.applyNormalMatrix(normalMatrix);
+    n.multiplyScalar(10);
+    n.add(intersects[0].point);
 
-//     const normalMatrix = new THREE.Matrix3().getNormalMatrix(mesh.matrixWorld);
+    intersection.normal.copy(intersects[0].face.normal);
+    mouseHelper?.lookAt(n);
 
-//     const n = intersects[0].face.normal.clone();
-//     n.applyNormalMatrix(normalMatrix);
-//     n.multiplyScalar(10);
-//     n.add(intersects[0].point);
+    const positions = line?.geometry.attributes.position;
+    positions.setXYZ(0, p.x, p.y, p.z);
+    positions.setXYZ(1, n.x, n.y, n.z);
+    positions.needsUpdate = true;
 
-//     intersection.normal.copy(intersects[0].face.normal);
-//     mouseHelper?.lookAt(n);
+    intersection.intersects = true;
 
-//     const positions = line?.geometry.attributes.position;
-//     positions.setXYZ(0, p.x, p.y, p.z);
-//     positions.setXYZ(1, n.x, n.y, n.z);
-//     positions.needsUpdate = true;
+    intersects.length = 0;
 
-//     intersection.intersects = true;
+  } else {
 
-//     intersects.length = 0;
+    intersection.intersects = false;
 
-//   } else {
+  }
 
-//     intersection.intersects = false;
-
-//   }
-
-// }
+}
 
 
 function handleResize() {
@@ -304,4 +321,37 @@ function handleResize() {
   // Update renderer
   renderer.setSize(w, h)
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+}
+
+function onPointerMove(event: PointerEvent) {
+  if (event.isPrimary) {
+    checkIntersection(event.clientX, event.clientY);
+  }
+}
+
+function shoot() {
+
+  if (!truck || !mouseHelper || !decalMaterial) {
+    return
+  }
+  console.log(scene?.children)
+  console.log("SHOOTING")
+  position.copy(intersection.point);
+  orientation.copy(mouseHelper.rotation);
+
+  if (params.rotate) orientation.z = Math.random() * 2 * Math.PI;
+
+  const scale = params.minScale + Math.random() * (params.maxScale - params.minScale);
+  size.set(scale, scale, scale);
+
+  const material = decalMaterial.clone();
+  material.color.setHex(Math.random() * 0xffffff);
+
+  const m = new THREE.Mesh(new DecalGeometry(undefined, position, orientation, size), material);
+  m.renderOrder = decals.length; // give decals a fixed render order
+
+  decals.push(m);
+
+  truck.attach(m);
+
 }

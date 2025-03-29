@@ -1,9 +1,9 @@
 # Cybertruck Vandal
 
-- What is the best way to put this into the rest of the site?
-- What sort of background?
-- Maybe some sound?
-
+- design of the color picker panel
+- environment map
+- sendgrid account
+- panel destruction animation
 
 ## Designs
 https://www.figma.com/board/rAzx9j6kbjoIwEUXPftjBA/Aesop?node-id=0-1&p=f&t=siL5s8IVWVZwDO0m-0
@@ -19,4 +19,6 @@ https://www.figma.com/board/rAzx9j6kbjoIwEUXPftjBA/Aesop?node-id=0-1&p=f&t=siL5s
 - https://sketchfab.com/3d-models/tesla-cybertruck-657e71b3e2ad468196668e9c9df708fb#download
 
 - https://www.cgtrader.com/free-3d-models/car/concept-car/cybertruck-ed8afb59-b0db-4ed2-b6ea-f3b24c39a534
+
+
 

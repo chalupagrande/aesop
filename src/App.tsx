@@ -22,7 +22,7 @@ export default App
 
 function Layout({ children }: { children?: React.ReactNode }) {
   return (
-    <div className="bg-background text-foreground max-h-screen overflow-hidden">
+    <div className="bg-background text-foreground max-h-screen overflow-hidden text-gray">
       <Navigation />
       <main>
         {children}
@@ -35,7 +35,7 @@ function Navigation() {
   return (
     <header className="flex flex-row items-center justify-between p-4">
       <NavLink to="/"><h1 className="text-3xl font-bold cursor-default">AESOP</h1></NavLink>
-      <NavLink to="/contact"><Button variant="link">contact</Button></NavLink>
+      <NavLink to="/contact"><Button variant="link">CONTACT</Button></NavLink>
     </header>
   )
 }
