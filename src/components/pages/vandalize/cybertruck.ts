@@ -229,12 +229,20 @@ export function render() {
 }
 
 function checkIntersection(x: number, y: number) {
-  if (!camera || !mouse || !line || !truck) {
+  if (!camera || !mouse || !line || !truck || !canvas) {
     return
   }
 
-  mouse.x = (x / window.innerWidth) * 2 - 1;
-  mouse.y = - (y / window.innerHeight) * 2 + 1;
+  // Get canvas position and dimensions
+  const rect = canvas.getBoundingClientRect();
+  
+  // Calculate mouse position relative to the canvas
+  const mouseX = x - rect.left;
+  const mouseY = y - rect.top;
+  
+  // Convert to normalized device coordinates (-1 to +1)
+  mouse.x = (mouseX / rect.width) * 2 - 1;
+  mouse.y = - (mouseY / rect.height) * 2 + 1;
 
   raycaster?.setFromCamera(mouse, camera);
   raycaster?.intersectObject(truck, true, intersects);
@@ -277,13 +285,13 @@ function checkIntersection(x: number, y: number) {
 
 function handleResize() {
 
-  if (!camera || !renderer) {
+  if (!camera || !renderer || !canvas) {
     return
   }
 
   // Update sizes
-  w = window.innerWidth
-  h = window.innerHeight
+  w = canvas.clientWidth
+  h = canvas.clientHeight
   // Update camera
   camera.aspect = w / h
   camera.updateProjectionMatrix()
