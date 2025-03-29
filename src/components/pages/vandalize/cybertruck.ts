@@ -134,7 +134,7 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
    */
 
 
-  rgbeLoader.load('abandoned_parking_4k.hdr', (environmentMap) => {
+  rgbeLoader.load('abandoned_parking_1k.hdr', (environmentMap) => {
     if (!scene) {
       throw new Error('Scene is not defined')
     }
@@ -296,7 +296,7 @@ function handleResize() {
 function onPointerMove(event: PointerEvent) {
   if (event.isPrimary) {
     checkIntersection(event.clientX, event.clientY);
-    
+
     if (isDrawing && intersection.intersects) {
       // Only draw if the point has moved enough distance
       if (lastDrawPosition.distanceTo(intersection.point) > params.brushSize * 0.5) {
@@ -318,7 +318,7 @@ function shoot() {
   const targetMesh = intersection.object
 
   if (params.rotate) orientation.z = Math.random() * 2 * Math.PI;
-  
+
   // Use brushSize parameter to control the size of the decal
   const brushScale = params.brushSize;
   size.set(brushScale, brushScale, brushScale);
