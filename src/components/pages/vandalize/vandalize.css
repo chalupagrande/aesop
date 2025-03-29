@@ -1,0 +1,16 @@
+.controls,
+.twitter-picker {
+  background: #3f3f3f !important;
+}
+
+.twitter-picker {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+
+.twitter-picker #rc-editable-input-1 {
+  background-color: white;
+  height: 30px;
+  font-size: 16px;
+}

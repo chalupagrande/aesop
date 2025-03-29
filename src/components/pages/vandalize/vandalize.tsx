@@ -1,20 +1,11 @@
-import { useRef, useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { type ColorResult, TwitterPicker } from 'react-color'
-import { init, render } from './cybertruck'
+import { Scene } from './scene'
+import "./vandalize.css"
 
 
-export function Vandalize() {
+export const Vandalize = React.memo(() => {
   const [color, setColor] = useState<string>(globalThis.settings.color)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    const container = containerRef.current
-    if (!canvas || !container) return
-    init(canvas, container)
-    render()
-  }, [canvasRef.current, containerRef.current])
 
   function handleChangeColor(color: ColorResult) {
     const hexColor = color.hex
@@ -23,8 +14,14 @@ export function Vandalize() {
   }
 
   return (
-    <div id="container" ref={containerRef}>
-      <div className="controls flex flex-col items-center justify-between p-4 absolute top-[50%] left-0 z-10 bg-">
+    <div>
+      <div className="controls flex flex-col  justify-between p-4 absolute top-[50%] left-0 z-10 bg-">
+        <p className="text-xs underline">decals:</p>
+        <div className="flex gap-2">
+          <span>circle</span>
+          <span>splatter</span>
+        </div>
+        <p className="text-xs underline">colors:</p>
         <TwitterPicker
           onChangeComplete={handleChangeColor}
           triangle="hide"
@@ -32,7 +29,7 @@ export function Vandalize() {
           color={color}
         />
       </div>
-      <canvas id="webgl" ref={canvasRef} />
+      <Scene />
     </div>
   )
-}
+})

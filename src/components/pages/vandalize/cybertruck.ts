@@ -88,9 +88,9 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
    * Objects
    */
 
-  const decalDiffuse = textureLoader.load('decal-diffuse.png');
+  const decalDiffuse = textureLoader.load('splatter-diffuse.png');
   decalDiffuse.colorSpace = THREE.SRGBColorSpace;
-  const decalNormal = textureLoader.load('decal-normal.jpg');
+  const decalNormal = textureLoader.load('splatter-normal.jpg');
   decalMaterial = new THREE.MeshPhongMaterial({
     specular: 0x444444,
     map: decalDiffuse,
@@ -237,11 +237,11 @@ function checkIntersection(x: number, y: number) {
 
   // Get canvas position and dimensions
   const rect = canvas.getBoundingClientRect();
-  
+
   // Calculate mouse position relative to the canvas
   const mouseX = x - rect.left;
   const mouseY = y - rect.top;
-  
+
   // Convert to normalized device coordinates (-1 to +1)
   mouse.x = (mouseX / rect.width) * 2 - 1;
   mouse.y = - (mouseY / rect.height) * 2 + 1;
@@ -306,13 +306,13 @@ function handleResize() {
 function onPointerMove(event: PointerEvent) {
   if (event.isPrimary) {
     checkIntersection(event.clientX, event.clientY);
-    
+
     // Update controls based on intersection
     updateControlsState();
 
     if (isDrawing && intersection.intersects) {
       // Only draw if the point has moved enough distance
-      if (lastDrawPosition.distanceTo(intersection.point) > params.brushSize * 0.5) {
+      if (lastDrawPosition.distanceTo(intersection.point) > params.brushSize * 0.2) {
         shoot();
         lastDrawPosition.copy(intersection.point);
       }
@@ -322,7 +322,7 @@ function onPointerMove(event: PointerEvent) {
 
 function updateControlsState() {
   if (!controls) return;
-  
+
   if (intersection.intersects) {
     // Disable controls when hovering over the truck
     if (controlsEnabled) {
