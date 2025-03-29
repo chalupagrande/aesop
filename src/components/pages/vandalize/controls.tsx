@@ -6,8 +6,6 @@ import { Slider } from '@/components/ui/slider'
 
 export function Controls() {
   const [color, setColor] = useState<string>(globalThis.settings.color)
-  const [size, setSize] = useState<number>(globalThis.settings.size)
-  const [pattern, setPattern] = useState<string>(globalThis.settings.pattern)
 
   function handleChangeColor(color: ColorResult) {
     const hexColor = color.hex
@@ -17,12 +15,10 @@ export function Controls() {
 
   function handleSizeChange(value: number[]) {
     const newSize = value[0]
-    setSize(newSize)
     globalThis.settings.size = newSize
   }
 
   function handlePatternChange(newPattern: string) {
-    setPattern(newPattern)
     globalThis.settings.pattern = newPattern
   }
 
