@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react'
 import { init, render } from './cybertruck'
 
-function Vandalize() {
+export function Vandalize() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -15,5 +15,3 @@ function Vandalize() {
     <canvas id="webgl" ref={canvasRef}></canvas>
   )
 }
-
-export default Vandalize

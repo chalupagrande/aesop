@@ -14,29 +14,39 @@ let loader: GLTFLoader | undefined
 let directionalLight: THREE.DirectionalLight | undefined
 let ambientLight: THREE.AmbientLight | undefined
 let floor: THREE.Mesh | undefined
-
-const sizes = {
-  width: 800,
-  height: 600
-}
+let increment = 0.01
+let w: number
+let h: number
 
 export function init(canvasElement: HTMLCanvasElement) {
+  w = window.innerWidth
+  h = window.innerHeight - 68
+
   canvas = canvasElement
-  canvas.width = sizes.width
-  canvas.height = sizes.height
+  canvas.width = w
+  canvas.height = h
+
+
+
+  /**
+   * Base
+   */
 
   scene = new THREE.Scene()
+  camera = new THREE.PerspectiveCamera(75, w / h)
+  camera.position.z = 5
+  camera.position.y = 1
+  scene.add(camera)
+
+  /**
+   * Objects
+   */
+
   geometry = new THREE.BoxGeometry(1, 1, 1)
   material = new THREE.MeshBasicMaterial({ color: 0xff0000 })
   mesh = new THREE.Mesh(geometry, material)
   mesh.position.y = 5
   mesh.position.x = 5
-
-
-  camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
-  camera.position.z = 5
-  camera.position.y = 1
-  scene.add(camera)
 
   loader = new GLTFLoader()
   loader.load(
@@ -67,8 +77,9 @@ export function init(canvasElement: HTMLCanvasElement) {
   )
 
   /**
- * Floor
- */
+   * Floor
+   */
+
   floor = new THREE.Mesh(
     new THREE.PlaneGeometry(10, 10),
     new THREE.MeshStandardMaterial({
@@ -80,6 +91,10 @@ export function init(canvasElement: HTMLCanvasElement) {
   floor.receiveShadow = true
   floor.rotation.x = - Math.PI * 0.5
   scene.add(floor)
+
+  /**
+   * Lights
+   */
 
   ambientLight = new THREE.AmbientLight(0xffffff, 10.4)
   scene.add(ambientLight)
@@ -96,19 +111,48 @@ export function init(canvasElement: HTMLCanvasElement) {
   scene.add(directionalLight)
 
 
+
+  /**
+   * Renderer
+   */
   renderer = new THREE.WebGLRenderer({
     canvas: canvas
   })
-  renderer.setSize(sizes.width, sizes.height)
+  renderer.setSize(w, h)
   renderer.shadowMap.enabled = true
   renderer.render(scene, camera)
 
 
+  /**
+   * Controls
+   */
   controls = new OrbitControls(camera, renderer.domElement);
   controls.update()
+
+  /**
+   * Resize
+   */
+
+  window.addEventListener('resize', () => {
+    // Update sizes
+    w = window.innerWidth
+    h = window.innerHeight
+
+    if (!camera || !renderer) {
+      return
+    }
+
+    // Update camera
+    camera.aspect = w / h
+    camera.updateProjectionMatrix()
+
+    // Update renderer
+    renderer.setSize(w, h)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+  })
 }
 
-let increment = 0.01
+
 export function render() {
   if (!controls || !renderer || !scene || !camera) {
     return

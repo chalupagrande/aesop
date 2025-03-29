@@ -13,3 +13,5 @@
 ## Models
 - https://sketchfab.com/3d-models/tesla-cybertruck-5a86defda4b24836a504fe5e597fdb17
 - https://sketchfab.com/3d-models/tesla-cybertruck-657e71b3e2ad468196668e9c9df708fb#download
+
+- https://www.cgtrader.com/free-3d-models/car/concept-car/cybertruck-ed8afb59-b0db-4ed2-b6ea-f3b24c39a534
