@@ -1,8 +1,8 @@
-import { useRef, useEffect } from 'react'
+import React, { useRef, useEffect } from 'react'
 import { init, render } from './cybertruck'
 
 
-export function Scene() {
+export const Scene = React.memo(() => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -21,4 +21,4 @@ export function Scene() {
       <canvas id="webgl" ref={canvasRef} />
     </div>
   )
-}
+})

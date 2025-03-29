@@ -31,9 +31,8 @@ export function Home() {
   }, [false])
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <img src="/not-found.png" alt="not found" className="object-cover" width="100" />
-      <h1 className="text-[250px] font-technical my-4">404</h1>
+    <div className="flex flex-col items-center justify-start h-screen p-2">
+      <h1 className="text-[250px] font-technical leading-[220px] my-4">404</h1>
       <p className="max-w-[500px] text-center">Outcomes, deal flow, valuation, exits, the videos. We still do all that.</p>
 
       <p className="my-4">Returning in:</p>
@@ -41,7 +40,8 @@ export function Home() {
         {timer}
       </div>
       <p>till then... </p>
-      <NavLink to="vandalize"><Button className="my-4">trash a cyber*uck</Button></NavLink>
+      <NavLink to="vandalize"><Button className="my-8">trash a cyber*uck</Button></NavLink>
+      <img src="/not-found.png" alt="not found" className="object-cover " width="100" />
     </div>
   )
 }
