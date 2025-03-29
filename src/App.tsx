@@ -1,25 +1,17 @@
-import reactLogo from '/react.svg'
-import viteLogo from '/vite.svg'
-import Vandalize from './components/vandalize'
+import { Button } from "./components/ui/button"
 
 function App() {
 
   return (
-    <>
-      <div className="flex items-center justify-center gap-2">
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-
-      <div>
-        <Vandalize />
-      </div>
-    </>
+    <div className="bg-background text-foreground">
+      <header className="flex flex-row items-center justify-between p-4">
+        <h1 className="text-3xl font-bold">AESOP</h1>
+        <Button variant="link">contact</Button>
+      </header>
+      <main>
+        <h1> something</h1>
+      </main>
+    </div>
   )
 }
 

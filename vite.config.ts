@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import restart from 'vite-plugin-restart'
 import tailwindcss from '@tailwindcss/vite'
+import path from 'path'
 
 
 // https://vite.dev/config/
@@ -25,4 +26,9 @@ export default defineConfig({
       tailwindcss(), // Tailwind CSS plugin,
       restart({ restart: ['../public/**',] }) // Restart server on static file change
     ],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
 })
