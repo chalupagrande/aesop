@@ -21,12 +21,17 @@ export function Controls() {
     globalThis.settings.size = newSize
   }
 
+  function handlePatternChange(newPattern: string) {
+    setPattern(newPattern)
+    globalThis.settings.pattern = newPattern
+  }
+
   return (
     <div className="controls flex flex-col  justify-between p-4 absolute top-[50%] left-0 z-10 bg-">
       <p className="text-xs underline">decals:</p>
       <div className="flex gap-2">
-        <span>circle</span>
-        <span>splatter</span>
+        <span onClick={() => handlePatternChange("circle")}>circle</span>
+        <span onClick={() => handlePatternChange("splatter")}>splatter</span>
       </div>
       <p className="text-xs underline">colors:</p>
       <TwitterPicker

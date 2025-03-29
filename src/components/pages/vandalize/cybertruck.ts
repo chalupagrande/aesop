@@ -110,9 +110,9 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
     normalMap: circleNormal,
     ...brushDefaults,
   });
-  const splatterDiffuse = textureLoader.load('circle-diffuse.png');
+  const splatterDiffuse = textureLoader.load('splatter-diffuse.png');
   splatterDiffuse.colorSpace = THREE.SRGBColorSpace;
-  const splatterNormal = textureLoader.load('circle-normal.jpg');
+  const splatterNormal = textureLoader.load('splatter-normal.jpg');
   const splatterBrushMaterial = new THREE.MeshPhongMaterial({
     map: splatterDiffuse,
     normalMap: splatterNormal,
@@ -296,8 +296,10 @@ function checkIntersection(x: number, y: number) {
 function handleResize() {
 
   if (!camera || !renderer || !canvas) {
+    console.log('Camera or renderer not defined')
     return
   }
+  console.log('Resizing canvas')
 
   // Update sizes
   w = canvas.clientWidth
@@ -360,6 +362,7 @@ function shoot() {
 
   // Use brushSize parameter to control the size of the decal
   const brushName = globalThis.settings.pattern
+  console.log(brushName)
   const brushMaterial = brushes[brushName]?.clone();
   const brushSize = globalThis.settings.size;
   size.set(brushSize, brushSize, brushSize);
