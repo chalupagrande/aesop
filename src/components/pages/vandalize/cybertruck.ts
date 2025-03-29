@@ -27,6 +27,8 @@ let mouseHelper: THREE.Mesh | undefined
 let line: THREE.Line | undefined
 let truck: THREE.Group<THREE.Object3DEventMap> | undefined
 let moved = false
+let isDrawing = false
+let lastDrawPosition = new THREE.Vector3()
 
 
 const intersection = {
@@ -47,6 +49,7 @@ const params = {
   minScale: 10,
   maxScale: 20,
   rotate: true,
+  brushSize: 0.5,
 };
 
 
@@ -175,6 +178,7 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
   gui.add(params, 'minScale', 1, 30);
   gui.add(params, 'maxScale', 1, 30);
   gui.add(params, 'rotate');
+  gui.add(params, 'brushSize', 0.1, 2).name('Brush Size');
 
   /**
    * Helpers
@@ -198,14 +202,17 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
   controls.addEventListener('change', function () {
     moved = true;
   });
-  window.addEventListener('pointerdown', function () {
+  window.addEventListener('pointerdown', function (event) {
     moved = false;
-  });
-  window.addEventListener('pointerup', function (event) {
-    if (moved === false) {
-      checkIntersection(event.clientX, event.clientY);
-      if (intersection.intersects) shoot();
+    checkIntersection(event.clientX, event.clientY);
+    if (intersection.intersects) {
+      isDrawing = true;
+      lastDrawPosition.copy(intersection.point);
+      shoot();
     }
+  });
+  window.addEventListener('pointerup', function () {
+    isDrawing = false;
   });
 
 }
@@ -289,6 +296,14 @@ function handleResize() {
 function onPointerMove(event: PointerEvent) {
   if (event.isPrimary) {
     checkIntersection(event.clientX, event.clientY);
+    
+    if (isDrawing && intersection.intersects) {
+      // Only draw if the point has moved enough distance
+      if (lastDrawPosition.distanceTo(intersection.point) > params.brushSize * 0.5) {
+        shoot();
+        lastDrawPosition.copy(intersection.point);
+      }
+    }
   }
 }
 
@@ -303,7 +318,10 @@ function shoot() {
   const targetMesh = intersection.object
 
   if (params.rotate) orientation.z = Math.random() * 2 * Math.PI;
-  size.set(1, 1, 1);
+  
+  // Use brushSize parameter to control the size of the decal
+  const brushScale = params.brushSize;
+  size.set(brushScale, brushScale, brushScale);
 
   const material = decalMaterial.clone();
   const color = new THREE.Color(globalThis.settings.color);
