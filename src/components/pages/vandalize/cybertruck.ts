@@ -238,6 +238,7 @@ export function render() {
   }
   controls.update()
   renderer.render(scene, camera)
+  directionalLight?.color.set(globalThis.settings.color)
   directionalLight?.position.set(Math.cos(increment) * 5, 5, Math.sin(increment) * 5)
   increment += 0.01
   stats?.update()
