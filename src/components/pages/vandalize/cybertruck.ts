@@ -29,6 +29,7 @@ let truck: THREE.Group<THREE.Object3DEventMap> | undefined
 let moved = false
 let isDrawing = false
 let lastDrawPosition = new THREE.Vector3()
+let controlsEnabled = true
 
 
 const intersection = {
@@ -205,6 +206,7 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
   window.addEventListener('pointerdown', function (event) {
     moved = false;
     checkIntersection(event.clientX, event.clientY);
+    updateControlsState();
     if (intersection.intersects) {
       isDrawing = true;
       lastDrawPosition.copy(intersection.point);
@@ -304,6 +306,9 @@ function handleResize() {
 function onPointerMove(event: PointerEvent) {
   if (event.isPrimary) {
     checkIntersection(event.clientX, event.clientY);
+    
+    // Update controls based on intersection
+    updateControlsState();
 
     if (isDrawing && intersection.intersects) {
       // Only draw if the point has moved enough distance
@@ -311,6 +316,24 @@ function onPointerMove(event: PointerEvent) {
         shoot();
         lastDrawPosition.copy(intersection.point);
       }
+    }
+  }
+}
+
+function updateControlsState() {
+  if (!controls) return;
+  
+  if (intersection.intersects) {
+    // Disable controls when hovering over the truck
+    if (controlsEnabled) {
+      controls.enabled = false;
+      controlsEnabled = false;
+    }
+  } else {
+    // Enable controls when not hovering over the truck
+    if (!controlsEnabled) {
+      controls.enabled = true;
+      controlsEnabled = true;
     }
   }
 }
