@@ -3,7 +3,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
-import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { GroundedSkybox } from 'three/addons/objects/GroundedSkybox.js';
 import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry.js'
 
@@ -21,15 +20,18 @@ let textureLoader: THREE.TextureLoader | undefined
 let rgbeLoader: RGBELoader | undefined
 let ambientLight: THREE.AmbientLight | undefined
 let stats: Stats | undefined
-let decalMaterial: THREE.MeshPhongMaterial | undefined
 let raycaster: THREE.Raycaster | undefined
 let mouseHelper: THREE.Mesh | undefined
 let line: THREE.Line | undefined
 let truck: THREE.Group<THREE.Object3DEventMap> | undefined
-let moved = false
 let isDrawing = false
 let lastDrawPosition = new THREE.Vector3()
 let controlsEnabled = true
+
+type BrushMapType = {
+  ["key"]: THREE.MeshPhongMaterial | undefined
+}
+const brushes: Record<string, THREE.MeshPhongMaterial | undefined> = {}
 
 
 const intersection = {
@@ -88,13 +90,8 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
    * Objects
    */
 
-  const decalDiffuse = textureLoader.load('splatter-diffuse.png');
-  decalDiffuse.colorSpace = THREE.SRGBColorSpace;
-  const decalNormal = textureLoader.load('splatter-normal.jpg');
-  decalMaterial = new THREE.MeshPhongMaterial({
+  const brushDefaults = {
     specular: 0x444444,
-    map: decalDiffuse,
-    normalMap: decalNormal,
     normalScale: new THREE.Vector2(1, 1),
     shininess: 30,
     transparent: true,
@@ -103,14 +100,35 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
     polygonOffset: true,
     polygonOffsetFactor: - 4,
     wireframe: false
+  }
+
+  const circleDiffuse = textureLoader.load('circle-diffuse.png');
+  circleDiffuse.colorSpace = THREE.SRGBColorSpace;
+  const circleNormal = textureLoader.load('circle-normal.jpg');
+  const circleBrushMaterial = new THREE.MeshPhongMaterial({
+    map: circleDiffuse,
+    normalMap: circleNormal,
+    ...brushDefaults,
   });
+  const splatterDiffuse = textureLoader.load('circle-diffuse.png');
+  splatterDiffuse.colorSpace = THREE.SRGBColorSpace;
+  const splatterNormal = textureLoader.load('circle-normal.jpg');
+  const splatterBrushMaterial = new THREE.MeshPhongMaterial({
+    map: splatterDiffuse,
+    normalMap: splatterNormal,
+    ...brushDefaults,
+  });
+
+  brushes.circle = circleBrushMaterial
+  brushes.splatter = splatterBrushMaterial
 
 
   gltfLoader.load(
     'tesla-cybertruck-2019.gltf',
     (gltf) => {
       truck = gltf.scene
-      truck.scale.set(5, 5, 5)
+      truck.scale.set(9, 9, 9)
+      truck.position.set(0, 0, 0)
       truck.rotateY(Math.PI * 0.5)
       scene?.add(truck)
       truck.traverse((child: THREE.Object3D) => {
@@ -135,7 +153,7 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
    */
 
 
-  rgbeLoader.load('abandoned_parking_1k.hdr', (environmentMap) => {
+  rgbeLoader.load('abandoned_parking_4k.hdr', (environmentMap) => {
     if (!scene) {
       throw new Error('Scene is not defined')
     }
@@ -144,7 +162,7 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
     scene.environment = environmentMap
 
     //skybox
-    const skybox = new GroundedSkybox(environmentMap, 15, 70);
+    const skybox = new GroundedSkybox(environmentMap, 15, 140);
     skybox.position.y = 15
     scene.add(skybox);
   })
@@ -175,12 +193,6 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
   controls = new OrbitControls(camera, renderer.domElement);
   controls.update()
 
-  const gui = new GUI();
-  gui.add(params, 'minScale', 1, 30);
-  gui.add(params, 'maxScale', 1, 30);
-  gui.add(params, 'rotate');
-  gui.add(params, 'brushSize', 0.1, 2).name('Brush Size');
-
   /**
    * Helpers
    */
@@ -200,11 +212,7 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
 
   window.addEventListener('resize', handleResize)
   window.addEventListener('pointermove', onPointerMove)
-  controls.addEventListener('change', function () {
-    moved = true;
-  });
   window.addEventListener('pointerdown', function (event) {
-    moved = false;
     checkIntersection(event.clientX, event.clientY);
     updateControlsState();
     if (intersection.intersects) {
@@ -340,7 +348,7 @@ function updateControlsState() {
 
 function shoot() {
 
-  if (!truck || !mouseHelper || !decalMaterial) {
+  if (!truck || !mouseHelper || !brushes.splatter || !brushes.circle) {
     return
   }
 
@@ -351,14 +359,15 @@ function shoot() {
   if (params.rotate) orientation.z = Math.random() * 2 * Math.PI;
 
   // Use brushSize parameter to control the size of the decal
-  const brushScale = params.brushSize;
-  size.set(brushScale, brushScale, brushScale);
+  const brushName = globalThis.settings.pattern
+  const brushMaterial = brushes[brushName]?.clone();
+  const brushSize = globalThis.settings.size;
+  size.set(brushSize, brushSize, brushSize);
 
-  const material = decalMaterial.clone();
   const color = new THREE.Color(globalThis.settings.color);
-  material.color.set(color);
+  brushMaterial?.color.set(color);
 
-  const m = new THREE.Mesh(new DecalGeometry(targetMesh, position, orientation, size), material);
+  const m = new THREE.Mesh(new DecalGeometry(targetMesh, position, orientation, size), brushMaterial);
   m.renderOrder = decals.length; // give decals a fixed render order
 
   decals.push(m);
