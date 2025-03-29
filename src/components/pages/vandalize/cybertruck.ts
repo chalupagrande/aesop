@@ -1,8 +1,10 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
+import { GroundedSkybox } from 'three/addons/objects/GroundedSkybox.js';
 
 
 // variables
@@ -15,6 +17,7 @@ let scene: THREE.Scene | undefined
 let controls: OrbitControls | undefined
 let gltfLoader: GLTFLoader | undefined
 let textureLoader: THREE.TextureLoader | undefined
+let rgbeLoader: RGBELoader | undefined
 let directionalLight: THREE.DirectionalLight | undefined
 let ambientLight: THREE.AmbientLight | undefined
 let floor: THREE.Mesh | undefined
@@ -26,6 +29,7 @@ let mouseHelper: THREE.Mesh | undefined
 let line: THREE.Line | undefined
 let mesh: THREE.Mesh | undefined
 let truckGroup: THREE.Group | undefined
+
 
 const intersection = {
   intersects: false,
@@ -77,6 +81,7 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
    */
   gltfLoader = new GLTFLoader()
   textureLoader = new THREE.TextureLoader()
+  rgbeLoader = new RGBELoader()
 
   /**
    * Objects
@@ -131,6 +136,25 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
   )
 
   /**
+   * Environment
+   */
+
+
+  rgbeLoader.load('cobblestone_street_night_4k.hdr', (environmentMap) => {
+    if (!scene) {
+      throw new Error('Scene is not defined')
+    }
+    environmentMap.mapping = THREE.EquirectangularReflectionMapping
+    scene.background = environmentMap
+    scene.environment = environmentMap
+
+    //skybox
+    const skybox = new GroundedSkybox(environmentMap, 15, 70);
+    skybox.position.y = 15
+    scene.add(skybox);
+  })
+
+  /**
    * Floor
    */
 
@@ -144,7 +168,7 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
   )
   floor.receiveShadow = true
   floor.rotation.x = - Math.PI * 0.5
-  scene.add(floor)
+  // scene.add(floor)
 
   /**
    * Lights

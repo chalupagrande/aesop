@@ -11,7 +11,8 @@ export default defineConfig({
   publicDir: '../public/', // Path from "root" to static assets (files that are served as they are)
   server:
   {
-    host: true, // Open to local network and display URL
+    host: true, // Open to local network and display URL,
+    allowedHosts: ["stirred-whippet-lively.ngrok-free.app"], // Allow ngrok URL
     // open: !('SANDBOX_URL' in process.env || 'CODESANDBOX_HOST' in process.env) // Open if it's not a CodeSandbox
   },
   build:
