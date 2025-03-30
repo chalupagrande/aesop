@@ -21,16 +21,15 @@ export function Home() {
 
   return (
     <div className="home">
-      <div className="flex flex-col items-center justify-start h-screen p-2">
-        <h1 className="text-[250px] font-technical leading-[220px] my-4 font-extrabold">404</h1>
+      <div className="flex flex-col items-center justify-start p-2 h-screen bg-[url('/images/404.jpg')] bg-cover bg-center">
+        <h1 className="text-[180px] md:text-[250px] font-technical leading-[220px] my-4 font-extrabold">404</h1>
         <p className="max-w-[500px] text-center">Outcomes, deal flow, valuation, exits, the videos. We still do all that.</p>
-        <p className="my-4">Returning in:</p>
-        <div className="text-5xl font-technical my-4">
+        <p className="my-2 font-bold">Returning in:</p>
+        <div className="text-4xl font-technical my-4 sm:text-5xl ">
           {timer}
         </div>
         <p>till then... </p>
-        <NavLink to="vandalize"><Button className="my-8">trash a cyber*uck</Button></NavLink>
-        <img src="/not-found.png" alt="not found" className="object-cover " width="100" />
+        <NavLink to="vandalize"><Button className="mt-4">draw a dick on this cyber*uck</Button></NavLink>
       </div>
     </div>
   )

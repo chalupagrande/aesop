@@ -1,17 +1,17 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-.background {
-  position: absolute;
-  width: 100vw;
-  height: 100vh;
-  z-index: 0;
-  background-image: url('grid2.png');
+
+.layout {
+  background: url("/grid-15-cropped.png");
+  background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  opacity: 0.15;
 }
 
+.video {
+  height: 50px;
+}
 
 @custom-variant dark (&:is(.dark *));
 

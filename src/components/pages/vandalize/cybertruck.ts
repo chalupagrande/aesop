@@ -67,8 +67,9 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
 
   scene = new THREE.Scene()
   camera = new THREE.PerspectiveCamera(75, w / h)
-  camera.position.z = 20
-  camera.position.y = 10
+  camera.position.z = -45
+  camera.position.y = 15
+  camera.position.x = -15
   scene.add(camera)
   stats = new Stats()
   container.appendChild(stats.dom)
@@ -149,12 +150,12 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
    */
 
 
-  rgbeLoader.load('abandoned_parking_4k.hdr', (environmentMap) => {
+  rgbeLoader.load('freight_station_4k.hdr', (environmentMap) => {
     if (!scene) {
       throw new Error('Scene is not defined')
     }
     environmentMap.mapping = THREE.EquirectangularReflectionMapping
-    // scene.background = environmentMap
+    scene.background = environmentMap
     scene.environment = environmentMap
 
     //skybox
@@ -200,6 +201,7 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
   geometry.setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
 
   line = new THREE.Line(geometry, new THREE.LineBasicMaterial());
+  line.visible = false;
   scene.add(line);
 
   /**

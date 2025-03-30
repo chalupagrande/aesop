@@ -2,6 +2,7 @@ import { Howl } from 'howler';
 
 export const sounds = new Howl({
   src: ['sound-sprites-3.mp3'],
+  volume: 0.1,
   sprite: {
     sprayShake: [4104, 2058],
     spraying: [829, 216],
