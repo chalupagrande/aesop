@@ -26,8 +26,8 @@ let line: THREE.Line | undefined
 let truck: THREE.Group<THREE.Object3DEventMap> | undefined
 const brushes: Record<string, THREE.MeshPhongMaterial | undefined> = {}
 let lastDrawPosition = new THREE.Vector3()
-let controlsEnabled = true
 let isDrawing = false
+let isDragging = false
 const intersection = {
   intersects: false,
   point: new THREE.Vector3(),
@@ -208,15 +208,26 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
   window.addEventListener('pointermove', onPointerMove)
   window.addEventListener('pointerdown', function (event) {
     checkIntersection(event.clientX, event.clientY);
-    updateControlsState();
+    
+    // Start drawing only if we're clicking directly on the model
     if (intersection.intersects) {
       isDrawing = true;
+      // Disable orbit controls when starting to draw
+      if (controls) controls.enabled = false;
       lastDrawPosition.copy(intersection.point);
       shoot();
+    } else {
+      // If clicking elsewhere, we might be starting an orbit drag
+      isDragging = true;
     }
   });
+  
   window.addEventListener('pointerup', function () {
     isDrawing = false;
+    isDragging = false;
+    
+    // Re-enable orbit controls when done drawing
+    if (controls) controls.enabled = true;
   });
 
 }
@@ -311,33 +322,12 @@ function onPointerMove(event: PointerEvent) {
   if (event.isPrimary) {
     checkIntersection(event.clientX, event.clientY);
 
-    // Update controls based on intersection
-    updateControlsState();
-
     if (isDrawing && intersection.intersects) {
       // Only draw if the point has moved enough distance
       if (lastDrawPosition.distanceTo(intersection.point) > params.brushSize * 0.2) {
         shoot();
         lastDrawPosition.copy(intersection.point);
       }
-    }
-  }
-}
-
-function updateControlsState() {
-  if (!controls) return;
-
-  if (intersection.intersects) {
-    // Disable controls when hovering over the truck
-    if (controlsEnabled) {
-      controls.enabled = false;
-      controlsEnabled = false;
-    }
-  } else {
-    // Enable controls when not hovering over the truck
-    if (!controlsEnabled) {
-      controls.enabled = true;
-      controlsEnabled = true;
     }
   }
 }
