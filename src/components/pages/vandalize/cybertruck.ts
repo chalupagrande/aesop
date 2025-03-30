@@ -24,16 +24,10 @@ let raycaster: THREE.Raycaster | undefined
 let mouseHelper: THREE.Mesh | undefined
 let line: THREE.Line | undefined
 let truck: THREE.Group<THREE.Object3DEventMap> | undefined
-let isDrawing = false
+const brushes: Record<string, THREE.MeshPhongMaterial | undefined> = {}
 let lastDrawPosition = new THREE.Vector3()
 let controlsEnabled = true
-
-type BrushMapType = {
-  ["key"]: THREE.MeshPhongMaterial | undefined
-}
-const brushes: Record<string, THREE.MeshPhongMaterial | undefined> = {}
-
-
+let isDrawing = false
 const intersection = {
   intersects: false,
   point: new THREE.Vector3(),
@@ -362,7 +356,6 @@ function shoot() {
 
   // Use brushSize parameter to control the size of the decal
   const brushName = globalThis.settings.pattern
-  console.log(brushName)
   const brushMaterial = brushes[brushName]?.clone();
   const brushSize = globalThis.settings.size;
   size.set(brushSize, brushSize, brushSize);
