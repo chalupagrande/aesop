@@ -5,6 +5,7 @@ import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
 import { GroundedSkybox } from 'three/addons/objects/GroundedSkybox.js';
 import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry.js'
+import { sounds } from './sounds'
 
 
 // variables
@@ -40,6 +41,7 @@ const decals: THREE.Mesh[] = []
 const position = new THREE.Vector3();
 const orientation = new THREE.Euler();
 const size = new THREE.Vector3(1, 1, 1);
+let soundId: number | undefined
 
 
 const params = {
@@ -208,7 +210,7 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
   window.addEventListener('pointermove', onPointerMove)
   window.addEventListener('pointerdown', function (event) {
     checkIntersection(event.clientX, event.clientY);
-    
+
     // Start drawing only if we're clicking directly on the model
     if (intersection.intersects) {
       isDrawing = true;
@@ -221,11 +223,11 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
       isDragging = true;
     }
   });
-  
+
   window.addEventListener('pointerup', function () {
     isDrawing = false;
     isDragging = false;
-    
+
     // Re-enable orbit controls when done drawing
     if (controls) controls.enabled = true;
   });
@@ -346,6 +348,25 @@ function shoot() {
 
   // Use brushSize parameter to control the size of the decal
   const brushName = globalThis.settings.pattern
+
+  // play sounds
+  if (brushName === "circle" && !soundId) {
+    soundId = sounds.play('spraying')
+    sounds.loop(true, soundId)
+    sounds.on('end', (endingId) => {
+      if (!isDrawing) {
+        sounds.stop(soundId)
+        soundId = undefined
+      }
+    })
+  }
+
+  if (brushName === "splatter") {
+    const index = Math.floor(Math.random() * 3) + 1
+    sounds.play(`shoot${index}`)
+  }
+
+
   const brushMaterial = brushes[brushName]?.clone();
   const brushSize = globalThis.settings.size;
   size.set(brushSize, brushSize, brushSize);

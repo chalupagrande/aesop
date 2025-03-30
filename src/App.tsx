@@ -24,6 +24,7 @@ function Layout({ children }: { children?: React.ReactNode }) {
   return (
     <div className="bg-background text-foreground max-h-screen overflow-hidden text-gray">
       <Navigation />
+      <div className="background" />
       <main>
         {children}
       </main>
@@ -33,7 +34,7 @@ function Layout({ children }: { children?: React.ReactNode }) {
 
 function Navigation() {
   return (
-    <header className="flex flex-row items-center justify-between p-4">
+    <header className="header flex flex-row items-center justify-between p-4">
       <NavLink to="/"><h1 className="text-3xl font-bold cursor-default">AESOP</h1></NavLink>
       <NavLink to="/contact"><Button variant="link">CONTACT</Button></NavLink>
     </header>

@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
+    "@types/howler": "^2.2.12",
     "@types/node": "^22.13.14",
     "@types/react": "^19.0.10",
     "@types/react-color": "^3.0.13",

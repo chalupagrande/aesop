@@ -1,6 +1,17 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+.background {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  background-image: url('grid2.png');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.15;
+}
+
 
 @custom-variant dark (&:is(.dark *));
 

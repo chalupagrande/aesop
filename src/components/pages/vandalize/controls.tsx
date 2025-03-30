@@ -3,7 +3,7 @@ import { type ColorResult, TwitterPicker } from 'react-color'
 import { Slider } from '@/components/ui/slider'
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible'
 import { PanelLeftOpen, PanelRightOpen } from 'lucide-react'
-
+import { sounds } from './sounds'
 
 
 export function Controls() {
@@ -14,6 +14,12 @@ export function Controls() {
     const hexColor = color.hex
     setColor(hexColor)
     globalThis.settings.color = hexColor
+    if (globalThis.settings.pattern === "circle") {
+      sounds.play('sprayShake')
+    }
+    if (globalThis.settings.pattern === "splatter") {
+      sounds.play('reload')
+    }
   }
 
   function handleSizeChange(value: number[]) {
@@ -23,11 +29,18 @@ export function Controls() {
 
   function handlePatternChange(newPattern: string) {
     globalThis.settings.pattern = newPattern
+    if (newPattern === "circle") {
+      sounds.play('sprayShake')
+    }
+    if (newPattern === "splatter") {
+      sounds.play('reload')
+    }
   }
 
   function handleOpenChange(open: boolean) {
     setIsOpen(!isOpen)
   }
+
 
   return (
     <div className="controls flex flex-col  justify-between p-4 absolute top-[50%] left-0 z-10 bg-">
