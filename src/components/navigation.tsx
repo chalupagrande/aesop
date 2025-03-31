@@ -9,7 +9,7 @@ export function Navigation() {
           <NavLink to="/"><h1 className="text-3xl font-bold cursor-default">AESOP</h1></NavLink>
           {/* <SignalVideo /> */}
         </div>
-        <NavLink to="/contact"><Button variant="link">CONTACT</Button></NavLink>
+        <a href="mailto:ryanorenstein@gmail.com"><Button variant="link">CONTACT</Button></a>
       </header>
     </>
   )
