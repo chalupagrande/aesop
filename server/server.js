@@ -12,7 +12,19 @@ if (!process.env.SENDGRID_API_KEY) {
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 app.use(express.json())
-app.use(express.static('dist'))
+
+const frontEndRoutes = [
+  '/',
+  '/contact',
+  '/vandalize'
+]
+frontEndRoutes.forEach((r) => {
+  app.use(r, express.static('dist'))
+})
+
+
+
+
 app.get("/api/health", (req, res) => {
   res.status(200).json({ message: "Server is running" })
 })

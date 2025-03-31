@@ -98,7 +98,7 @@ export function init(canvasElement: HTMLCanvasElement) {
 
   const circleDiffuse = textureLoader.load('circle-diffuse.png');
   circleDiffuse.colorSpace = THREE.SRGBColorSpace;
-  const circleNormal = textureLoader.load('circle-normal.jpg');
+  const circleNormal = textureLoader.load('circle-normal.png');
   const circleBrushMaterial = new THREE.MeshPhongMaterial({
     map: circleDiffuse,
     normalMap: circleNormal,
