@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router"
-import { Contact } from "@/components/pages/contact"
-import { Home } from "@/components/pages/home"
-import { Vandalize } from "@/components/pages/vandalize"
+import { Contact } from "@/pages/contact"
+import { Home } from "@/pages/home"
+import { Vandalize } from "@/pages/vandalize"
 import { Navigation } from "@/components/navigation"
 
 function App() {

@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+html,
+body {
+  overflow: hidden;
+}
 
 .layout {
   background: url("/grid-15-cropped.png");
@@ -9,8 +13,22 @@
   background-position: center;
 }
 
-.video {
-  height: 50px;
+
+.home {
+  overflow: hidden;
+}
+
+.video-container {
+  overflow: hidden;
+}
+
+.video--home {
+  width: 50vw;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 50%);
+  z-index: -1;
 }
 
 @custom-variant dark (&:is(.dark *));

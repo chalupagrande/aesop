@@ -2,7 +2,6 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
-import Stats from 'three/examples/jsm/libs/stats.module.js'
 import { GroundedSkybox } from 'three/addons/objects/GroundedSkybox.js';
 import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry.js'
 import { sounds } from './sounds'
@@ -20,7 +19,6 @@ let gltfLoader: GLTFLoader | undefined
 let textureLoader: THREE.TextureLoader | undefined
 let rgbeLoader: RGBELoader | undefined
 let ambientLight: THREE.AmbientLight | undefined
-let stats: Stats | undefined
 let raycaster: THREE.Raycaster | undefined
 let mouseHelper: THREE.Mesh | undefined
 let line: THREE.Line | undefined
@@ -28,7 +26,6 @@ let truck: THREE.Group<THREE.Object3DEventMap> | undefined
 const brushes: Record<string, THREE.MeshPhongMaterial | undefined> = {}
 let lastDrawPosition = new THREE.Vector3()
 let isDrawing = false
-let isDragging = false
 const intersection = {
   intersects: false,
   point: new THREE.Vector3(),
@@ -53,7 +50,7 @@ const params = {
 
 
 
-export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
+export function init(canvasElement: HTMLCanvasElement) {
   w = window.innerWidth
   h = window.innerHeight - 68
 
@@ -71,8 +68,8 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
   camera.position.y = 15
   camera.position.x = -15
   scene.add(camera)
-  stats = new Stats()
-  container.appendChild(stats.dom)
+  // stats = new Stats()
+  // container.appendChild(stats.dom)
   raycaster = new THREE.Raycaster();
 
 
@@ -139,7 +136,6 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
         }
       })
     },
-    (progress) => { },
     (error) => {
       console.error('Error loading model:', error)
     }
@@ -220,15 +216,11 @@ export function init(canvasElement: HTMLCanvasElement, container: HTMLElement) {
       if (controls) controls.enabled = false;
       lastDrawPosition.copy(intersection.point);
       shoot();
-    } else {
-      // If clicking elsewhere, we might be starting an orbit drag
-      isDragging = true;
     }
   });
 
   window.addEventListener('pointerup', function () {
     isDrawing = false;
-    isDragging = false;
 
     // Re-enable orbit controls when done drawing
     if (controls) controls.enabled = true;
@@ -243,7 +235,7 @@ export function render() {
   }
   controls.update()
   renderer.render(scene, camera)
-  stats?.update()
+  // stats?.update()
   requestAnimationFrame(render)
 }
 
@@ -355,7 +347,7 @@ function shoot() {
   if (brushName === "circle" && !soundId) {
     soundId = sounds.play('spraying')
     sounds.loop(true, soundId)
-    sounds.on('end', (endingId) => {
+    sounds.on('end', () => {
       if (!isDrawing) {
         sounds.stop(soundId)
         soundId = undefined

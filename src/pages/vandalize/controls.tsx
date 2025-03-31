@@ -37,7 +37,7 @@ export function Controls() {
     }
   }
 
-  function handleOpenChange(open: boolean) {
+  function handleOpenChange() {
     setIsOpen(!isOpen)
   }
 

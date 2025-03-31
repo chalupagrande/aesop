@@ -10,7 +10,7 @@ export const Scene = React.memo(() => {
     const canvas = canvasRef.current
     const container = containerRef.current
     if (!canvas || !container) return
-    init(canvas, container)
+    init(canvas)
     render()
   }, [canvasRef.current, containerRef.current])
 

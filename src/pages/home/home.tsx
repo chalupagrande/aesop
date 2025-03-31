@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { NavLink } from "react-router"
+import { SignalVideo } from "@/components/signalVideo"
 
 const targetDate = new Date("2025-05-01T00:00:00Z")
 let interval: NodeJS.Timeout | undefined
@@ -22,7 +23,7 @@ export function Home() {
   return (
     <div className="home">
       <div className="flex flex-col items-center justify-start p-2 h-screen bg-[url('/images/404.jpg')] bg-cover bg-center">
-        <h1 className="text-[180px] md:text-[250px] font-technical leading-[220px] my-4 font-extrabold">404</h1>
+        <h1 className="text-[180px] font-technical leading-[220px] my-2 sm:my-4 sm:text-[250px] font-extrabold">404</h1>
         <p className="max-w-[500px] text-center">Outcomes, deal flow, valuation, exits, the videos. We still do all that.</p>
         <p className="my-2 font-bold">Returning in:</p>
         <div className="text-4xl font-technical my-4 sm:text-5xl ">
@@ -31,6 +32,7 @@ export function Home() {
         <p>till then... </p>
         <NavLink to="vandalize"><Button className="mt-4">draw a dick on this cyber*uck</Button></NavLink>
       </div>
+      <SignalVideo />
     </div>
   )
 }
