@@ -30,7 +30,7 @@ export function Home() {
           {timer}
         </div>
         <p>till then... </p>
-        <NavLink to="vandalize"><Button className="mt-4">draw a dick on this cyber*uck</Button></NavLink>
+        <NavLink to="vandalize"><Button className="mt-4">vandalize this cyber*uck</Button></NavLink>
       </div>
       <SignalVideo />
     </div>
