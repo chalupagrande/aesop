@@ -19,8 +19,8 @@ export function Navigation() {
             <AlertDialogTitle>Actually maybe don't...</AlertDialogTitle>
             <AlertDialogDescription>
               <div className="flex flex-col gap-4 items-start">
-                <p>Listen, we actually don't have much time to get this thing off the ground, and we are working really hard to do that. So if you wouldn't mind, just let us do our thing.</p>
-                <Button onClick={() => setIsOpen(false)}>Close</Button>
+                <p>Come back when the counter runs out.</p>
+                <Button onClick={() => setIsOpen(false)}>Okay</Button>
               </div>
             </AlertDialogDescription>
           </AlertDialogContent>
