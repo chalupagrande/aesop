@@ -24,7 +24,7 @@ export function Home() {
     <div className="home">
       <div className="flex flex-col items-center justify-start p-2 h-screen bg-[url('/images/404.jpg')] bg-cover bg-center">
         <h1 className="text-[180px] font-technical leading-[220px] my-2 sm:my-4 sm:text-[250px] font-extrabold">404</h1>
-        <p className="max-w-[500px] text-center">Outcomes, deal flow, valuation, exits, the videos. We still do all that.</p>
+        <p className="max-w-[500px] text-center">Outcomes, deal flow, valuation, exits... the videos. We still do all that.</p>
         <p className="my-2 font-bold">Returning in:</p>
         <div className="text-4xl font-technical my-4 sm:text-5xl ">
           {timer}
