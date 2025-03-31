@@ -3,7 +3,7 @@ import { type ColorResult, TwitterPicker } from 'react-color'
 import { Slider } from '@/components/ui/slider'
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible'
 import { PanelLeftOpen, PanelRightOpen } from 'lucide-react'
-import { sounds } from './sounds'
+// import { sounds } from './sounds'
 
 
 export function Controls() {
@@ -14,12 +14,12 @@ export function Controls() {
     const hexColor = color.hex
     setColor(hexColor)
     globalThis.settings.color = hexColor
-    if (globalThis.settings.pattern === "circle") {
-      sounds.play('sprayShake')
-    }
-    if (globalThis.settings.pattern === "splatter") {
-      sounds.play('reload')
-    }
+    // if (globalThis.settings.pattern === "circle") {
+    //   sounds.play('sprayShake')
+    // }
+    // if (globalThis.settings.pattern === "splatter") {
+    //   sounds.play('reload')
+    // }
   }
 
   function handleSizeChange(value: number[]) {
@@ -29,12 +29,12 @@ export function Controls() {
 
   function handlePatternChange(newPattern: string) {
     globalThis.settings.pattern = newPattern
-    if (newPattern === "circle") {
-      sounds.play('sprayShake')
-    }
-    if (newPattern === "splatter") {
-      sounds.play('reload')
-    }
+    // if (newPattern === "circle") {
+    //   sounds.play('sprayShake')
+    // }
+    // if (newPattern === "splatter") {
+    //   sounds.play('reload')
+    // }
   }
 
   function handleOpenChange() {
@@ -49,8 +49,8 @@ export function Controls() {
         <CollapsibleContent>
           <p className="text-xs underline">decals:</p>
           <div className="flex gap-2">
-            <span onClick={() => handlePatternChange("circle")}>circle</span>
-            <span onClick={() => handlePatternChange("splatter")}>splatter</span>
+            <span className="cursor-pointer" onClick={() => handlePatternChange("circle")}>circle</span>
+            <span className="cursor-pointer" onClick={() => handlePatternChange("splatter")}>splatter</span>
           </div>
           <p className="text-xs underline">colors:</p>
           <TwitterPicker

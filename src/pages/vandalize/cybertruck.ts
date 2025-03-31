@@ -4,7 +4,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 import { GroundedSkybox } from 'three/addons/objects/GroundedSkybox.js';
 import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry.js'
-import { sounds } from './sounds'
+// import { sounds } from './sounds'
 
 
 // variables
@@ -38,7 +38,7 @@ const decals: THREE.Mesh[] = []
 const position = new THREE.Vector3();
 const orientation = new THREE.Euler();
 const size = new THREE.Vector3(1, 1, 1);
-let soundId: number | undefined
+// let soundId: number | undefined
 
 
 const params = {
@@ -343,22 +343,22 @@ function shoot() {
   // Use brushSize parameter to control the size of the decal
   const brushName = globalThis.settings.pattern
 
-  // play sounds
-  if (brushName === "circle" && !soundId) {
-    soundId = sounds.play('spraying')
-    sounds.loop(true, soundId)
-    sounds.on('end', () => {
-      if (!isDrawing) {
-        sounds.stop(soundId)
-        soundId = undefined
-      }
-    })
-  }
+  // // play sounds
+  // if (brushName === "circle" && !soundId) {
+  //   soundId = sounds.play('spraying')
+  //   sounds.loop(true, soundId)
+  //   sounds.on('end', () => {
+  //     if (!isDrawing) {
+  //       sounds.stop(soundId)
+  //       soundId = undefined
+  //     }
+  //   })
+  // }
 
-  if (brushName === "splatter") {
-    const index = Math.floor(Math.random() * 3) + 1
-    sounds.play(`shoot${index}`)
-  }
+  // if (brushName === "splatter") {
+  //   const index = Math.floor(Math.random() * 3) + 1
+  //   sounds.play(`shoot${index}`)
+  // }
 
 
   const brushMaterial = brushes[brushName]?.clone();
