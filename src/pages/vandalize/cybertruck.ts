@@ -134,6 +134,7 @@ export function init(canvasElement: HTMLCanvasElement) {
           rubberMaterial.metalness = 0
           rubberMaterial.roughness = 1
         }
+
       })
     },
     (error) => {

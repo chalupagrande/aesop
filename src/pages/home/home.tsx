@@ -8,17 +8,17 @@ let interval: NodeJS.Timeout | undefined
 const timerString = getTimerString()
 
 export function Home() {
-  const [timer, setTimer] = useState(timerString)
-  useEffect(() => {
-    interval = setInterval(() => {
-      const newTimer = getTimerString()
-      setTimer(newTimer)
-    }, 1000)
+  // const [timer, setTimer] = useState(timerString)
+  // useEffect(() => {
+  //   interval = setInterval(() => {
+  //     const newTimer = getTimerString()
+  //     setTimer(newTimer)
+  //   }, 1000)
 
-    return () => {
-      clearInterval(interval)
-    }
-  }, [false])
+  //   return () => {
+  //     clearInterval(interval)
+  //   }
+  // }, [false])
 
   return (
     <div className="home">
@@ -27,7 +27,7 @@ export function Home() {
         <p className="max-w-[500px] text-center">Outcomes, deal flow, valuation, exits... the videos. We still do all that.</p>
         <p className="my-2 font-bold">Returning in:</p>
         <div className="text-4xl font-technical my-4 sm:text-5xl ">
-          {timer}
+          00:00:00:00
         </div>
         <p>till then... </p>
         <NavLink to="vandalize"><Button className="mt-4">vandalize this cyber*uck</Button></NavLink>
