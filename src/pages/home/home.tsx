@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react"
+// import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { NavLink } from "react-router"
 import { SignalVideo } from "@/components/signalVideo"
 
-const targetDate = new Date("2025-05-01T00:00:00Z")
-let interval: NodeJS.Timeout | undefined
-const timerString = getTimerString()
+// const targetDate = new Date("2025-05-01T00:00:00Z")
+// let interval: NodeJS.Timeout | undefined
+// const timerString = getTimerString()
 
 export function Home() {
   // const [timer, setTimer] = useState(timerString)
@@ -38,18 +38,18 @@ export function Home() {
 }
 
 
-function getTimerString() {
-  const now = new Date()
-  const diff = targetDate.getTime() - now.getTime()
-  const seconds = Math.floor(diff / 1000)
-  const minutes = Math.floor(seconds / 60)
-  const hours = Math.floor(minutes / 60)
-  const days = Math.floor(hours / 24)
+// function getTimerString() {
+//   const now = new Date()
+//   const diff = targetDate.getTime() - now.getTime()
+//   const seconds = Math.floor(diff / 1000)
+//   const minutes = Math.floor(seconds / 60)
+//   const hours = Math.floor(minutes / 60)
+//   const days = Math.floor(hours / 24)
 
-  const daysStr = String(days).padStart(2, "0")
-  const hoursStr = String(hours % 24).padStart(2, "0")
-  const minutesStr = String(minutes % 60).padStart(2, "0")
-  const secondsStr = String(seconds % 60).padStart(2, "0")
-  const timerStr = `${daysStr}:${hoursStr}:${minutesStr}:${secondsStr}`
-  return timerStr
-}
+//   const daysStr = String(days).padStart(2, "0")
+//   const hoursStr = String(hours % 24).padStart(2, "0")
+//   const minutesStr = String(minutes % 60).padStart(2, "0")
+//   const secondsStr = String(seconds % 60).padStart(2, "0")
+//   const timerStr = `${daysStr}:${hoursStr}:${minutesStr}:${secondsStr}`
+//   return timerStr
+// }
